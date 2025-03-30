@@ -1,32 +1,38 @@
-describe('Agenda de Contatos - Testes Funcionais', () => {
+/// <reference types="cypress" />
+
+describe('Testes para agenda', () => {
   beforeEach(() => {
-      cy.visit('https://agenda-contatos-react.vercel.app/');
-  });
+      cy.visit('https://agenda-contatos-react.vercel.app/')
+  })
 
-  const contato = {
-      nome: 'Teste Cypress',
-      nomeEditado: 'Teste Cypress Editado',
-      email: 'teste@cypress.com',
-      telefone: '11999999999'
-  };
+  it('Deve adicionar um novo contato', () => {
+      cy.get('.sc-gLDzan.ckeKmo').first().click() // Seleciona o primeiro botão de adicionar
+      cy.get('input[type="text"]').type('Alessandra') // Preenche o nome
+      cy.get('input[type="email"]').type('alemairis@teste.com') // Preenche o email
+      cy.get('input[type="tel"]').type('21 12345678') // Preenche o telefone
+      cy.get('button[type="submit"]').click() // Clica para adicionar o contato
 
-  it('Deve adicionar, editar e excluir um contato', () => {
-      // Adicionar contato
-      cy.get('[data-testid="add-contact"]').click();
-      cy.get('[data-testid="contact-name"]').type(contato.nome);
-      cy.get('[data-testid="contact-email"]').type(contato.email);
-      cy.get('[data-testid="contact-phone"]').type(contato.telefone);
-      cy.get('[data-testid="save-contact"]').click();
-      cy.contains(contato.nome).should('be.visible');
+      cy.contains('Alessandra').should('be.visible')
+      cy.contains('alemairis@teste.com').should('be.visible')
+      cy.contains('21 12345678').should('be.visible')
+  })
 
-      // Editar contato
-      cy.contains(contato.nome).parent().find('[data-testid="edit-contact"]').click();
-      cy.get('[data-testid="contact-name"]').clear().type(contato.nomeEditado);
-      cy.get('[data-testid="save-contact"]').click();
-      cy.contains(contato.nomeEditado).should('be.visible');
+  it('Deve editar um contato', () => {
+      cy.get('.sc-gueYoa > .edit').eq(1).click() // Clica no botão de editar do segundo contato
 
-      // Excluir contato
-      cy.contains(contato.nomeEditado).parent().find('[data-testid="delete-contact"]').click();
-      cy.contains(contato.nomeEditado).should('not.exist');
-  });
-});
+      cy.get('[type="text"]').clear().type('Alessandra')
+      cy.get('[type="email"]').clear().type('email@gmail.com')
+      cy.get('[type="tel"]').clear().type('123456789')
+      cy.get('.alterar').click() // Clica para salvar as alterações
+
+      cy.contains('Alessandra').should('be.visible')
+      cy.contains('email@gmail.com').should('be.visible')
+      cy.contains('123456789').should('be.visible')
+  })
+
+  it('Deve deletar um contato', () => {
+      cy.get(':nth-child(2) > .sc-gueYoa > .delete').click()
+
+  })
+})
+
